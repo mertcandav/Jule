@@ -412,9 +412,7 @@ namespace jule
     template <typename T>
     jule::Str to_str(const T &obj)
     {
-        std::stringstream stream;
-        stream << obj;
-        return jule::Str(stream.str());
+        return jule::Str();
     }
 
     inline jule::Str to_str(const jule::Str &s) noexcept
