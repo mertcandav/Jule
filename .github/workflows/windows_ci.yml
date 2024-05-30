@@ -13,4 +13,4 @@ jobs:
 
       - name: Test Clang
         run: |
-          cd .\clang\llvm-mingw-20240518-ucrt-x86_64\bin\clang++ --version
+          .\clang\llvm-mingw-20240518-ucrt-x86_64\bin\clang++ --version
