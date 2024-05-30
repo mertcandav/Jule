@@ -13,4 +13,5 @@ jobs:
 
       - name: Test Clang
         run: |
+          dir
           .\clang\bin\clang++ --version
