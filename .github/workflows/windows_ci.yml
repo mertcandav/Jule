@@ -17,5 +17,4 @@ jobs:
 
       - name: Test JuleC
         run: |
-          .\bin\julec version
-          .\bin\julec julenv
+          .\bin\julec
