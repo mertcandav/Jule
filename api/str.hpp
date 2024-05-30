@@ -412,7 +412,7 @@ namespace jule
     template <typename T>
     jule::Str to_str(const T &obj)
     {
-        return jule::Str();
+        return jule::Str("test");
     }
 
     inline jule::Str to_str(const jule::Str &s) noexcept
