@@ -13,7 +13,7 @@ jobs:
       - name: Build JuleC
         run: |
           mkdir bin
-          g++ -Wa,-mbig-obj -O0 --std=c++17 -w -o .\bin\julec.exe .\ir.cpp
+          g++ "-Wa,-mbig-obj" -O0 --std=c++17 -w -o .\bin\julec.exe .\ir.cpp
 
       - name: Test JuleC
         run: |
