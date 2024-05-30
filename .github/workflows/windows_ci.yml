@@ -1,0 +1,20 @@
+name: Build [GCC] - Windows
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get IR
+        run: |
+          curl -o ir.cpp https://raw.githubusercontent.com/julelang/julec-ir/main/src/windows-amd64.cpp
+
+      - name: Build JuleC
+        run: |
+          mkdir bin
+          g++ -O0 --std=c++17 -Wno-everything -o .\bin\julec.exe ir.cpp
+
+      - name: Test JuleC
+          .\bin\julec version
+          .\bin\julec julenv
