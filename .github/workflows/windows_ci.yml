@@ -16,5 +16,6 @@ jobs:
           g++ -O0 --std=c++17 -Wno-everything -o .\bin\julec.exe ir.cpp
 
       - name: Test JuleC
+        run: |
           .\bin\julec version
           .\bin\julec julenv
