@@ -17,4 +17,4 @@ jobs:
 
       - name: Test JuleC
         run: |
-          .\bin\julec
+          .\bin\julec --compiler gcc .\src\julec
