@@ -13,7 +13,7 @@ jobs:
 
       - name: Test Clang
         run: |
-          cd clang
+          cd .\clang\llvm-mingw-20240518-ucrt-x86_64
           dir
           cd bin
           dir
