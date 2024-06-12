@@ -8,9 +8,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: julelang/ci@main
 
-      - name: Set UTF-16 CodePage
-        run: chcp 1200
-
       - name: Test - Standard Library
         run: |
           .\bin\julec --compiler gcc -o test tests/std
