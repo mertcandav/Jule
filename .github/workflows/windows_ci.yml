@@ -8,7 +8,7 @@ jobs:
 
       - name: Get Clang
         run: |
-          curl -o .\clang.zip -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20240518/llvm-mingw-20240518-msvcrt-x86_64.zip
+          curl -o .\clang.zip -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20240518/llvm-mingw-20240518-ucrt-x86_64.zip
           Expand-Archive .\clang.zip -DestinationPath .\clang
 
       - name: Get IR
@@ -18,7 +18,7 @@ jobs:
       - name: Build JuleC
         run: |
           mkdir bin
-          .\clang\llvm-mingw-20240518-msvcrt-x86_64\bin\clang++ -O0 --std=c++17 -Wno-everything -o bin\julec.exe ir.cpp
+          .\clang\llvm-mingw-20240518-ucrt-x86_64\bin\clang++ -O0 --std=c++17 -Wno-everything -o bin\julec.exe ir.cpp
 
       - name: Test JuleC
         run: |
