@@ -10,6 +10,7 @@ use opt::{
     MutSlicingExprModel,
     StrInsertBeginExprModel,
     StrAppendExprModel,
+    StrCompExprModel,
 }
 use conv for std::conv
 use std::env::{Arch}
@@ -18,6 +19,7 @@ use std::jule::build::{Directive, Is64Bit}
 use std::jule::constant::{Const}
 use std::jule::lex::{Token, TokenKind}
 use std::jule::sema::{
+    Trait,
     Var,
     FnIns,
     StructIns,
@@ -96,6 +98,7 @@ enum compExprModel: type {
     &MutSlicingExprModel,
     &StrInsertBeginExprModel,
     &StrAppendExprModel,
+    &StrCompExprModel,
 }
 
 struct exprCoder {
@@ -370,6 +373,21 @@ impl exprCoder {
         self.model(expr)
     }
 
+    fn castTraitFromTrait(mut &self, mut &m: &CastingExprModel, mut t1: &Trait, mut t2: &Trait) {
+        self.possibleRefExpr(m.Expr)
+        self.oc.write(".mask<")
+        self.oc.write(identCoder.traitDecl(t1))
+        self.oc.write(">(")
+        self.oc.pushAndWriteMaskMapper(t1, t2)
+        self.oc.write(")")
+    }
+
+    // Casting expression.
+    //
+    // Special cases:
+    //  - The any type castings should be came first than others.
+    //    Otherwise, code generation might be wrong because <any> the
+    //    uses special casting algorithms.
     fn casting(mut &self, mut m: &CastingExprModel) {
         match {
         | isAny(m.Kind):
@@ -401,13 +419,6 @@ impl exprCoder {
             self.oc.write(", &" + anyTypeIdent)
             self.oc.write(conv::Itoa(i))
             self.oc.write(")")
-        | m.ExprKind.Ptr() != nil
-        | m.Kind.Ptr() != nil:
-            self.oc.write("((")
-            self.oc.write(self.oc.tc.kind(m.Kind))
-            self.oc.write(")(")
-            self.possibleRefExpr(m.Expr)
-            self.oc.write("))")
         | isAny(m.ExprKind):
             self.possibleRefExpr(m.Expr)
             self.oc.write(".")
@@ -427,7 +438,18 @@ impl exprCoder {
             self.oc.write("&" + anyTypeIdent)
             self.oc.write(conv::Itoa(self.oc.pushAnyType(m.Kind)))
             self.oc.write(")")
+        | m.ExprKind.Ptr() != nil
+        | m.Kind.Ptr() != nil:
+            self.oc.write("((")
+            self.oc.write(self.oc.tc.kind(m.Kind))
+            self.oc.write(")(")
+            self.possibleRefExpr(m.Expr)
+            self.oc.write("))")
         | m.ExprKind.Trait() != nil:
+            if m.Kind.Trait() != nil {
+                self.castTraitFromTrait(m, m.Kind.Trait(), m.ExprKind.Trait())
+                ret
+            }
             self.possibleRefExpr(m.Expr)
             self.oc.write(".")
             if m.Kind.Sptr() != nil {
@@ -1262,6 +1284,22 @@ impl exprCoder {
         self.oc.write("));")
     }
 
+    fn strComp(mut &self, mut m: &StrCompExprModel) {
+        if m.NotEq {
+            self.oc.write("(!")
+        }
+        let bytes = []byte(m.Right.ReadStr())
+        self.possibleRefExpr(m.Left)
+        self.oc.write(".equal(")
+        self.oc.write(cstrLit(bytes))
+        self.oc.write(", ")
+        self.oc.write(conv::Itoa(len(bytes)))
+        self.oc.write(")")
+        if m.NotEq {
+            self.oc.write(")")
+        }
+    }
+
     fn model(mut &self, mut m: compExprModel) {
         match type m {
         | str:
@@ -1358,6 +1396,8 @@ impl exprCoder {
             self.mutSlicing((&MutSlicingExprModel)(m))
         | &StrInsertBeginExprModel:
             self.strInsertBegin((&StrInsertBeginExprModel)(m))
+        | &StrCompExprModel:
+            self.strComp((&StrCompExprModel)(m))
         |:
             self.oc.write("<unimplemented_expression_model>")
         }

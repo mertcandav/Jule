@@ -29,6 +29,8 @@ namespace jule
     // Also it is builtin str type constructor.
     template <typename T>
     jule::Str to_str(const T &obj);
+    template <typename T>
+    jule::Str to_str(const T *ptr);
     inline jule::Str to_str(const jule::Str &s) noexcept;
     inline jule::Str to_str(const char *s) noexcept;
     inline jule::Str to_str(char *s) noexcept;
@@ -358,6 +360,13 @@ namespace jule
             return jule::Str(this->buffer + str.buffer);
         }
 
+        inline jule::Bool equal(const char *s, const jule::Int n) const noexcept
+        {
+            if (this->len() != n)
+                return false;
+            return std::strcmp(reinterpret_cast<const char *>(this->buffer.c_str()), s) == 0;
+        }
+
         inline jule::Bool operator==(const jule::Str &str) const noexcept
         {
             return this->buffer == str.buffer;
@@ -414,6 +423,14 @@ namespace jule
     {
         std::stringstream stream;
         stream << obj;
+        return jule::Str(stream.str());
+    }
+
+    template <typename T>
+    jule::Str to_str(const T *ptr)
+    {
+        std::stringstream stream;
+        stream << ptr;
         return jule::Str(stream.str());
     }
 
