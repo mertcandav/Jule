@@ -1,0 +1,15 @@
+name: Test - Windows
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          clang++ -O0 --std=c++17 -Wno-everything -o main.exe main.cpp -lshell3
+
+      - name: Test
+        run: |
+          .\main
