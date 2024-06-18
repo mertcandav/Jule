@@ -8,7 +8,7 @@ jobs:
 
       - name: Build
         run: |
-          clang++ -O0 --std=c++17 -Wno-everything -o main.exe main.cpp -lshell32
+          clang++ -O0 --std=c++17 -Wno-everything -o main.exe main.cpp -lshell32 -lkernel32
 
       - name: Test
         run: |
